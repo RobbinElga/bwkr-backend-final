@@ -90,66 +90,6 @@ Route::prefix('v1')->group(function () {
         Route::post('notifications/read-all', [AdminNotificationController::class, 'markAllRead']);
         Route::post('notifications/{notification}/read', [AdminNotificationController::class, 'markRead']);
 
-        Route::middleware('role:super_admin,admin')->group(function () {
-            Route::get('ping', fn() => response()->json(['message' => 'Halo Admin/SuperAdmin!']));
-            Route::apiResource('programs', AdminProgramController::class)->except(['destroy']);
-            Route::get('projects/{project}/stats', [AdminProjectController::class, 'stats']);
-            Route::apiResource('projects', AdminProjectController::class)->except(['destroy']);
-            Route::apiResource('projects.updates', AdminProjectUpdateController::class)->scoped();
-            Route::get('donations-input/export', [AdminDonationInputController::class, 'export']);
-            Route::get('donations-claim/export', [AdminClaimController::class, 'export']);
-            Route::get('expenses/export',        [AdminExpenseController::class, 'export']);
-            Route::get('crm/donors/export', [AdminCrmDonorController::class, 'export']);
-            Route::get('dashboard/export',  [AdminDashboardController::class, 'export']);
-            Route::apiResource('bank-accounts', AdminBankAccountController::class)
-                ->only(['store', 'update', 'destroy']);
-            Route::post('donations-claim/{claim}/approve',  [AdminClaimController::class, 'approve']);
-            Route::post('donations-claim/{claim}/reject',   [AdminClaimController::class, 'reject']);
-            Route::get('expenses',                       [AdminExpenseController::class, 'index']);
-            Route::post('expenses',                      [AdminExpenseController::class, 'store']);
-            Route::get('expenses/{expense}',             [AdminExpenseController::class, 'show']);
-            Route::post('expenses/{expense}/approve',    [AdminExpenseController::class, 'approve']);
-            Route::post('expenses/{expense}/reject',     [AdminExpenseController::class, 'reject']);
-            Route::get('expenses/{expense}/file/{type}', [AdminExpenseController::class, 'file']);
-            Route::get('dashboard', [AdminDashboardController::class, 'index']);
-            Route::apiResource('news', AdminNewsController::class);
-            Route::apiResource('partners', AdminPartnerController::class);
-            Route::apiResource('testimonials', AdminTestimonialController::class);
-            Route::apiResource('impact-videos', AdminImpactVideoController::class);
-            Route::apiResource('achievements', AdminAchievementController::class);
-            Route::put('crm/donors/{hash}/tier',  [AdminCrmDonorController::class, 'updateTier']);
-            Route::apiResource('reports', AdminReportController::class);
-            Route::get('dashboard', [AdminDashboardController::class, 'index']);
-            Route::get('dashboard/trends', [AdminDashboardController::class, 'trends']);
-            Route::get('projects/{project}/donors', [AdminProjectController::class, 'donors']);
-            Route::get('settings',  [AdminSettingController::class, 'index']);
-            Route::post('settings', [AdminSettingController::class, 'update']);
-            Route::get('keuangan/dashboard', [KeuanganDashboardController::class, 'index']);
-            Route::get('news-categories', [AdminNewsCategoryController::class, 'index']);
-            Route::post('news-categories', [AdminNewsCategoryController::class, 'store']);
-            Route::delete('news-categories/{newsCategory}', [AdminNewsCategoryController::class, 'destroy']);
-            Route::apiResource('news', AdminNewsController::class);
-        });
-
-        Route::middleware('role:super_admin,admin,cs')->group(function () {
-            Route::get('donations-input',                  [AdminDonationInputController::class, 'index']);
-            Route::post('donations-input',                 [AdminDonationInputController::class, 'store']);
-            Route::get('donations-input/{donation}',       [AdminDonationInputController::class, 'show']);
-            Route::get('donations-input/{donation}/proof', [AdminDonationInputController::class, 'proof']);
-            Route::get('donations-claim',                   [AdminClaimController::class, 'index']);
-            Route::post('donations-claim',                  [AdminClaimController::class, 'store']);
-            Route::get('crm/donors',              [AdminCrmDonorController::class, 'index']);
-            Route::get('crm/donors/{hash}',       [AdminCrmDonorController::class, 'show']);
-            Route::apiResource('crm/templates', AdminBroadcastTemplateController::class)
-                ->only(['index', 'store', 'update', 'destroy'])
-                ->parameters(['templates' => 'template']);
-            Route::post('crm/broadcast', [AdminBroadcastController::class, 'send']);
-            Route::get('crm/broadcasts', [AdminBroadcastController::class, 'index']);
-            Route::apiResource('bank-accounts', AdminBankAccountController::class)
-                ->only(['index', 'show']);
-            Route::get('dashboard/recent-donations', [AdminDashboardController::class, 'recentDonations']);
-        });
-
         Route::middleware('role:super_admin')->group(function () {
             Route::get('programs/trashed',       [AdminProgramController::class, 'trashed']);
             Route::post('programs/{id}/restore', [AdminProgramController::class, 'restore']);
@@ -186,6 +126,68 @@ Route::prefix('v1')->group(function () {
             Route::get('keuangan/ledger', [AdminCashLedgerController::class, 'index']);
         });
     });
+
+
+    Route::middleware('role:super_admin,admin')->group(function () {
+        Route::get('ping', fn() => response()->json(['message' => 'Halo Admin/SuperAdmin!']));
+        Route::apiResource('programs', AdminProgramController::class)->except(['destroy']);
+        Route::get('projects/{project}/stats', [AdminProjectController::class, 'stats']);
+        Route::apiResource('projects', AdminProjectController::class)->except(['destroy']);
+        Route::apiResource('projects.updates', AdminProjectUpdateController::class)->scoped();
+        Route::get('donations-input/export', [AdminDonationInputController::class, 'export']);
+        Route::get('donations-claim/export', [AdminClaimController::class, 'export']);
+        Route::get('expenses/export',        [AdminExpenseController::class, 'export']);
+        Route::get('crm/donors/export', [AdminCrmDonorController::class, 'export']);
+        Route::get('dashboard/export',  [AdminDashboardController::class, 'export']);
+        Route::apiResource('bank-accounts', AdminBankAccountController::class)
+            ->only(['store', 'update', 'destroy']);
+        Route::post('donations-claim/{claim}/approve',  [AdminClaimController::class, 'approve']);
+        Route::post('donations-claim/{claim}/reject',   [AdminClaimController::class, 'reject']);
+        Route::get('expenses',                       [AdminExpenseController::class, 'index']);
+        Route::post('expenses',                      [AdminExpenseController::class, 'store']);
+        Route::get('expenses/{expense}',             [AdminExpenseController::class, 'show']);
+        Route::post('expenses/{expense}/approve',    [AdminExpenseController::class, 'approve']);
+        Route::post('expenses/{expense}/reject',     [AdminExpenseController::class, 'reject']);
+        Route::get('expenses/{expense}/file/{type}', [AdminExpenseController::class, 'file']);
+        Route::get('dashboard', [AdminDashboardController::class, 'index']);
+        Route::apiResource('news', AdminNewsController::class);
+        Route::apiResource('partners', AdminPartnerController::class);
+        Route::apiResource('testimonials', AdminTestimonialController::class);
+        Route::apiResource('impact-videos', AdminImpactVideoController::class);
+        Route::apiResource('achievements', AdminAchievementController::class);
+        Route::put('crm/donors/{hash}/tier',  [AdminCrmDonorController::class, 'updateTier']);
+        Route::apiResource('reports', AdminReportController::class);
+        Route::get('dashboard', [AdminDashboardController::class, 'index']);
+        Route::get('dashboard/trends', [AdminDashboardController::class, 'trends']);
+        Route::get('projects/{project}/donors', [AdminProjectController::class, 'donors']);
+        Route::get('settings',  [AdminSettingController::class, 'index']);
+        Route::post('settings', [AdminSettingController::class, 'update']);
+        Route::get('keuangan/dashboard', [KeuanganDashboardController::class, 'index']);
+        Route::get('news-categories', [AdminNewsCategoryController::class, 'index']);
+        Route::post('news-categories', [AdminNewsCategoryController::class, 'store']);
+        Route::delete('news-categories/{newsCategory}', [AdminNewsCategoryController::class, 'destroy']);
+        Route::apiResource('news', AdminNewsController::class);
+    });
+
+    Route::middleware('role:super_admin,admin,cs')->group(function () {
+        Route::get('donations-input',                  [AdminDonationInputController::class, 'index']);
+        Route::post('donations-input',                 [AdminDonationInputController::class, 'store']);
+        Route::get('donations-input/{donation}',       [AdminDonationInputController::class, 'show']);
+        Route::get('donations-input/{donation}/proof', [AdminDonationInputController::class, 'proof']);
+        Route::get('donations-claim',                   [AdminClaimController::class, 'index']);
+        Route::post('donations-claim',                  [AdminClaimController::class, 'store']);
+        Route::get('crm/donors',              [AdminCrmDonorController::class, 'index']);
+        Route::get('crm/donors/{hash}',       [AdminCrmDonorController::class, 'show']);
+        Route::apiResource('crm/templates', AdminBroadcastTemplateController::class)
+            ->only(['index', 'store', 'update', 'destroy'])
+            ->parameters(['templates' => 'template']);
+        Route::post('crm/broadcast', [AdminBroadcastController::class, 'send']);
+        Route::get('crm/broadcasts', [AdminBroadcastController::class, 'index']);
+        Route::apiResource('bank-accounts', AdminBankAccountController::class)
+            ->only(['index', 'show']);
+        Route::get('dashboard/recent-donations', [AdminDashboardController::class, 'recentDonations']);
+    });
+
 
     // ===== AREA DONATUR =====
     Route::middleware(['auth:sanctum', 'ability:donatur'])->prefix('donatur')->group(function () {
