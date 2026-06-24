@@ -124,4 +124,35 @@ class DonationInputController extends Controller
 
         return $exporter->respond($format, 'laporan-donasi-' . now()->format('Ymd-His'), $payload);
     }
+
+
+    public function destroy(DonationInput $donation)
+    {
+        $donation->delete();
+        $this->audit->log('deleted', $donation);
+        return response()->json(['message' => 'Donasi dihapus.']);
+    }
+
+    public function trashed()
+    {
+        return DonationInputResource::collection(
+            DonationInput::onlyTrashed()->with('bankAccount')->latest('deleted_at')->get()
+        );
+    }
+
+    public function restore(int $id)
+    {
+        $d = DonationInput::onlyTrashed()->findOrFail($id);
+        $d->restore();
+        $this->audit->log('restored', $d);
+        return response()->json(['message' => 'Donasi dipulihkan.']);
+    }
+
+    public function forceDelete(int $id)
+    {
+        $d = DonationInput::onlyTrashed()->findOrFail($id);
+        $d->forceDelete();
+        $this->audit->log('force_deleted', $d);
+        return response()->json(['message' => 'Donasi dihapus permanen.']);
+    }
 }

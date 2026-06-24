@@ -168,6 +168,21 @@ Route::prefix('v1')->group(function () {
             Route::post('projects/{id}/restore', [AdminProjectController::class, 'restore']);
             Route::delete('projects/{id}/force', [AdminProjectController::class, 'forceDelete']);
             Route::delete('projects/{project}',  [AdminProjectController::class, 'destroy']);
+            // Transaksi (super_admin): hapus / restore / hapus permanen
+            Route::get('donations-input/trashed',        [AdminDonationInputController::class, 'trashed']);
+            Route::post('donations-input/{id}/restore',  [AdminDonationInputController::class, 'restore']);
+            Route::delete('donations-input/{id}/force',  [AdminDonationInputController::class, 'forceDelete']);
+            Route::delete('donations-input/{donation}',  [AdminDonationInputController::class, 'destroy']);
+
+            Route::get('donations-claim/trashed',        [AdminClaimController::class, 'trashed']);
+            Route::post('donations-claim/{id}/restore',  [AdminClaimController::class, 'restore']);
+            Route::delete('donations-claim/{id}/force',  [AdminClaimController::class, 'forceDelete']);
+            Route::delete('donations-claim/{claim}',     [AdminClaimController::class, 'destroy']);
+
+            Route::get('expenses/trashed',               [AdminExpenseController::class, 'trashed']);
+            Route::post('expenses/{id}/restore',         [AdminExpenseController::class, 'restore']);
+            Route::delete('expenses/{id}/force',         [AdminExpenseController::class, 'forceDelete']);
+            Route::delete('expenses/{expense}',          [AdminExpenseController::class, 'destroy']);
         });
     });
 

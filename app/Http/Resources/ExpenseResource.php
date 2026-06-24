@@ -22,6 +22,7 @@ class ExpenseResource extends JsonResource
             'notes'         => $this->notes,
             'approved_at'   => $this->approved_at?->toIso8601String(),
             'created_at'    => $this->created_at,
+            'deleted_at' => $this->deleted_at,
         ];
     }
 }

@@ -19,6 +19,7 @@ class ClaimResource extends JsonResource
             'status'            => $this->status->value,
             'approved_at'       => $this->approved_at?->toIso8601String(),
             'created_at'        => $this->created_at,
+            'deleted_at' => $this->deleted_at,
         ];
     }
 }

@@ -26,6 +26,7 @@ class DonationInputResource extends JsonResource
             'status'       => $this->status->value,
             'user_id'      => $this->user_id,
             'created_at'   => $this->created_at,
+            'deleted_at' => $this->deleted_at,
         ];
     }
 }

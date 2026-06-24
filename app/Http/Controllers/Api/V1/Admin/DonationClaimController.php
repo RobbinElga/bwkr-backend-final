@@ -212,4 +212,34 @@ class DonationClaimController extends Controller
 
         return $exporter->respond($format, 'laporan-klaim-' . now()->format('Ymd-His'), $payload);
     }
+
+    public function destroy(DonationClaim $claim)
+    {
+        $claim->delete();
+        $this->audit->log('deleted', $claim);
+        return response()->json(['message' => 'Klaim dihapus.']);
+    }
+
+    public function trashed()
+    {
+        return ClaimResource::collection(
+            DonationClaim::onlyTrashed()->with('project')->latest('deleted_at')->get()
+        );
+    }
+
+    public function restore(int $id)
+    {
+        $c = DonationClaim::onlyTrashed()->findOrFail($id);
+        $c->restore();
+        $this->audit->log('restored', $c);
+        return response()->json(['message' => 'Klaim dipulihkan.']);
+    }
+
+    public function forceDelete(int $id)
+    {
+        $c = DonationClaim::onlyTrashed()->findOrFail($id);
+        $c->forceDelete();
+        $this->audit->log('force_deleted', $c);
+        return response()->json(['message' => 'Klaim dihapus permanen.']);
+    }
 }

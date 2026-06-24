@@ -194,4 +194,34 @@ class ExpenseController extends Controller
 
         return $exporter->respond($format, 'laporan-pengeluaran-' . now()->format('Ymd-His'), $payload);
     }
+
+    public function destroy(Expense $expense)
+    {
+        $expense->delete();
+        $this->audit->log('deleted', $expense);
+        return response()->json(['message' => 'Pengeluaran dihapus.']);
+    }
+
+    public function trashed()
+    {
+        return ExpenseResource::collection(
+            Expense::onlyTrashed()->with('project')->latest('deleted_at')->get()
+        );
+    }
+
+    public function restore(int $id)
+    {
+        $e = Expense::onlyTrashed()->findOrFail($id);
+        $e->restore();
+        $this->audit->log('restored', $e);
+        return response()->json(['message' => 'Pengeluaran dipulihkan.']);
+    }
+
+    public function forceDelete(int $id)
+    {
+        $e = Expense::onlyTrashed()->findOrFail($id);
+        $e->forceDelete();
+        $this->audit->log('force_deleted', $e);
+        return response()->json(['message' => 'Pengeluaran dihapus permanen.']);
+    }
 }
