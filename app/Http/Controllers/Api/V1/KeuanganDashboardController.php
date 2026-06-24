@@ -60,15 +60,14 @@ class KeuanganDashboardController extends Controller
             ->values();
 
         // ===== 4. PENGELUARAN PER KATEGORI =====
-        $perKategori = Expense::select(
-            'category',
-            DB::raw('SUM(amount) as total')
-        )
-            ->groupBy('category')
+        $perKategori = Expense::query()
+            ->with('project:id,name')
+            ->select('project_id', DB::raw('SUM(amount) as total'))
+            ->groupBy('project_id')
             ->orderByDesc('total')
             ->get()
             ->map(fn($e) => [
-                'kategori' => $e->category,
+                'kategori' => $e->project?->name ?? 'Tanpa Proyek',
                 'total'    => (int) $e->total,
             ]);
 
