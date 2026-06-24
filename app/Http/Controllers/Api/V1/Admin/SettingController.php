@@ -62,6 +62,13 @@ class SettingController extends Controller
 
         // gambar
         foreach ($imageKeys as $key) {
+            // Hapus gambar (kosongkan + hapus file lama)
+            if ($request->boolean("{$key}__remove")) {
+                $old = Setting::where('key', $key)->value('value');
+                if ($old) Storage::disk('public')->delete($old);
+                Setting::updateOrCreate(['key' => $key], ['value' => null]);
+                continue;
+            }
             if ($request->hasFile($key)) {
                 $request->validate([$key => ['image', 'mimes:jpeg,jpg,png,webp,svg', 'max:5120']]);
                 $old = Setting::where('key', $key)->value('value');
