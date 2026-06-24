@@ -151,14 +151,6 @@ Route::prefix('v1')->group(function () {
         });
 
         Route::middleware('role:super_admin')->group(function () {
-            Route::get('ping-super', fn() => response()->json(['message' => 'Halo SuperAdmin!']));
-
-            Route::apiResource('users', AdminUserController::class);
-            Route::post('users/{user}/reset-password', [AdminUserController::class, 'resetPassword']);
-            Route::post('users/{user}/reset-2fa',      [AdminUserController::class, 'resetTwoFactor']);
-
-            Route::get('audit-logs', [AdminAuditLogController::class, 'index']);
-            Route::get('keuangan/ledger', [AdminCashLedgerController::class, 'index']);
             Route::get('programs/trashed',       [AdminProgramController::class, 'trashed']);
             Route::post('programs/{id}/restore', [AdminProgramController::class, 'restore']);
             Route::delete('programs/{id}/force', [AdminProgramController::class, 'forceDelete']);
@@ -168,7 +160,7 @@ Route::prefix('v1')->group(function () {
             Route::post('projects/{id}/restore', [AdminProjectController::class, 'restore']);
             Route::delete('projects/{id}/force', [AdminProjectController::class, 'forceDelete']);
             Route::delete('projects/{project}',  [AdminProjectController::class, 'destroy']);
-            // Transaksi (super_admin): hapus / restore / hapus permanen
+
             Route::get('donations-input/trashed',        [AdminDonationInputController::class, 'trashed']);
             Route::post('donations-input/{id}/restore',  [AdminDonationInputController::class, 'restore']);
             Route::delete('donations-input/{id}/force',  [AdminDonationInputController::class, 'forceDelete']);
@@ -183,6 +175,15 @@ Route::prefix('v1')->group(function () {
             Route::post('expenses/{id}/restore',         [AdminExpenseController::class, 'restore']);
             Route::delete('expenses/{id}/force',         [AdminExpenseController::class, 'forceDelete']);
             Route::delete('expenses/{expense}',          [AdminExpenseController::class, 'destroy']);
+
+            Route::get('ping-super', fn() => response()->json(['message' => 'Halo SuperAdmin!']));
+
+            Route::apiResource('users', AdminUserController::class);
+            Route::post('users/{user}/reset-password', [AdminUserController::class, 'resetPassword']);
+            Route::post('users/{user}/reset-2fa',      [AdminUserController::class, 'resetTwoFactor']);
+
+            Route::get('audit-logs', [AdminAuditLogController::class, 'index']);
+            Route::get('keuangan/ledger', [AdminCashLedgerController::class, 'index']);
         });
     });
 
