@@ -12,7 +12,7 @@ class UserResource extends JsonResource
             'id'                 => $this->id,
             'name'               => $this->name,
             'email'              => $this->email,
-            'phone'              => $this->phone,
+            'phone'              => rescue(fn() => $this->phone, null, false),
             'role'               => $this->role->value,
             'is_active'          => $this->is_active,
             'two_factor_enabled' => $this->two_factor_enabled,
