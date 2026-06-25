@@ -113,4 +113,12 @@ class UserManagementController extends Controller
     {
         return collect($user->toArray())->only(['id', 'name', 'email', 'role', 'is_active'])->all();
     }
+
+    public function counts()
+    {
+        return response()->json([
+            'staff'   => User::where('role', '!=', 'donatur')->count(),
+            'donatur' => User::where('role', 'donatur')->count(),
+        ]);
+    }
 }

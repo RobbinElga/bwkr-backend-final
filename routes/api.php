@@ -118,6 +118,7 @@ Route::prefix('v1')->group(function () {
             Route::delete('expenses/{expense}',          [AdminExpenseController::class, 'destroy']);
 
             Route::get('ping-super', fn() => response()->json(['message' => 'Halo SuperAdmin!']));
+            Route::get('users/counts', [AdminUserController::class, 'counts']);
             Route::apiResource('users', AdminUserController::class);
             Route::post('users/{user}/reset-password', [AdminUserController::class, 'resetPassword']);
             Route::post('users/{user}/reset-2fa',      [AdminUserController::class, 'resetTwoFactor']);
