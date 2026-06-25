@@ -146,8 +146,6 @@ Route::prefix('v1')->group(function () {
             Route::post('expenses/{expense}/approve',    [AdminExpenseController::class, 'approve']);
             Route::post('expenses/{expense}/reject',     [AdminExpenseController::class, 'reject']);
             Route::get('expenses/{expense}/file/{type}', [AdminExpenseController::class, 'file']);
-            Route::get('dashboard', [AdminDashboardController::class, 'index']);
-            Route::get('dashboard/trends', [AdminDashboardController::class, 'trends']);
             Route::get('projects/{project}/donors', [AdminProjectController::class, 'donors']);
             Route::apiResource('news', AdminNewsController::class);
             Route::apiResource('partners', AdminPartnerController::class);
@@ -180,6 +178,8 @@ Route::prefix('v1')->group(function () {
             Route::post('crm/broadcast', [AdminBroadcastController::class, 'send']);
             Route::get('crm/broadcasts', [AdminBroadcastController::class, 'index']);
             Route::apiResource('bank-accounts', AdminBankAccountController::class)->only(['index', 'show']);
+            Route::get('dashboard', [AdminDashboardController::class, 'index']);
+            Route::get('dashboard/trends', [AdminDashboardController::class, 'trends']);
             Route::get('dashboard/recent-donations', [AdminDashboardController::class, 'recentDonations']);
         });
     }); // <-- penutup prefix('admin')
