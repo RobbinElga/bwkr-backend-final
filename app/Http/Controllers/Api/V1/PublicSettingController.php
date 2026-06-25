@@ -16,15 +16,21 @@ class PublicSettingController extends Controller
         $values = $this->settings->all();
         $groups = config('site_settings.groups', []);
 
-        foreach ($groups as $group) {
+        $data = [];
+        foreach ($groups as $gkey => $group) {
+            if ($gkey === 'wa') {
+                continue; // jangan ekspos pesan/token WA ke publik
+            }
             foreach ($group['fields'] as $f) {
+                $key = $f['key'];
+                $val = $values[$key] ?? null;
                 if ($f['type'] === 'image') {
-                    $key = $f['key'];
-                    $values[$key] = ! empty($values[$key]) ? Storage::disk('public')->url($values[$key]) : null;
+                    $val = ! empty($val) ? Storage::disk('public')->url($val) : null;
                 }
+                $data[$key] = $val;
             }
         }
 
-        return response()->json(['data' => $values]);
+        return response()->json(['data' => $data]);
     }
 }

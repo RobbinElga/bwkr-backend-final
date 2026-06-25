@@ -160,6 +160,8 @@ Route::prefix('v1')->group(function () {
             Route::get('news-categories', [AdminNewsCategoryController::class, 'index']);
             Route::post('news-categories', [AdminNewsCategoryController::class, 'store']);
             Route::delete('news-categories/{newsCategory}', [AdminNewsCategoryController::class, 'destroy']);
+            Route::get('whatsapp-settings',  [AdminSettingController::class, 'whatsapp']);
+            Route::post('whatsapp-settings', [AdminSettingController::class, 'updateWhatsapp']);
         });
 
         // ===== ADMIN + SUPER + CS =====

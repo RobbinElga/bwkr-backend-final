@@ -82,4 +82,39 @@ class SettingController extends Controller
 
         return response()->json(['message' => 'Pengaturan disimpan.']);
     }
+
+
+    /** Status WA untuk admin (tidak mengembalikan token asli). */
+    public function whatsapp()
+    {
+        $enabledRaw = $this->settings->get('wa_enabled');
+        return response()->json([
+            'wa_enabled'     => $enabledRaw !== null
+                ? filter_var($enabledRaw, FILTER_VALIDATE_BOOLEAN)
+                : (bool) config('whatsapp.enabled'),
+            'wa_api_key_set' => ! empty($this->settings->get('wa_api_key')),
+        ]);
+    }
+
+    /** Simpan token & status WA. */
+    public function updateWhatsapp(Request $request)
+    {
+        $request->validate([
+            'wa_api_key' => ['nullable', 'string', 'max:255'],
+            'wa_enabled' => ['nullable', 'boolean'],
+        ]);
+
+        $payload = [];
+        if ($request->filled('wa_api_key')) {
+            $payload['wa_api_key'] = trim($request->input('wa_api_key'));
+        }
+        if ($request->has('wa_enabled')) {
+            $payload['wa_enabled'] = $request->boolean('wa_enabled') ? '1' : '0';
+        }
+
+        $this->settings->setMany($payload);
+        $this->audit->log('updated', null, new: ['settings' => array_keys($payload)]);
+
+        return response()->json(['message' => 'Pengaturan WhatsApp disimpan.']);
+    }
 }

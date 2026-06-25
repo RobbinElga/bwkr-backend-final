@@ -11,7 +11,19 @@ class FonnteService implements WhatsAppServiceInterface
     public function sendText(string $phone, string $message): bool
     {
         try {
-            $token = config('whatsapp.api_key');
+            $settings = app(\App\Services\SettingService::class);
+
+            // status aktif: DB dulu, lalu .env
+            $enabledRaw = $settings->get('wa_enabled');
+            $enabled = $enabledRaw !== null
+                ? filter_var($enabledRaw, FILTER_VALIDATE_BOOLEAN)
+                : (bool) config('whatsapp.enabled');
+            if (! $enabled) {
+                return false;
+            }
+
+            // token: DB dulu, lalu .env
+            $token = $settings->get('wa_api_key') ?: config('whatsapp.api_key');
 
             if (empty($token)) {
                 Log::warning('[WA] Token Fonnte kosong — pengiriman dilewati.');
@@ -25,6 +37,7 @@ class FonnteService implements WhatsAppServiceInterface
                     'target'  => $this->normalize($phone),
                     'message' => $message,
                 ]);
+            // ...sisanya TETAP sama...
 
             if ($response->failed()) {
                 Log::warning('[WA] HTTP gagal', ['status' => $response->status()]);
