@@ -67,6 +67,7 @@ Route::prefix('v1')->group(function () {
     Route::get('programs/{program}', [PublicProgramController::class, 'show']);
     Route::get('projects',           [PublicProjectController::class, 'index']);
     Route::get('projects/{project}', [PublicProjectController::class, 'show']);
+    Route::get('projects/{project}/donors', [PublicProjectController::class, 'donors']);
     Route::get('reports',          [PublicReportController::class, 'index']);
     Route::get('reports/{report}', [PublicReportController::class, 'show']);
     Route::get('bank-accounts', [PublicBankAccountController::class, 'index']);
