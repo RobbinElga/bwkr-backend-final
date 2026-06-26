@@ -35,7 +35,7 @@ class PublicProjectController extends Controller
         $donors = DonationClaim::with('donationInput:id,donor_name,donor_alias')
             ->where('project_id', $project->id)
             ->where('status', 'approved')
-            ->latest('approved_at')
+            ->orderByDesc('amount')
             ->limit(100)
             ->get()
             ->map(fn($c) => [
