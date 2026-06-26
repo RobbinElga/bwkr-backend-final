@@ -20,6 +20,7 @@ class StoreDonationRequest extends FormRequest
             'salutation'      => ['nullable', 'string', 'in:Pak,Bu,Bang,Kak,Dek,Ustadz,Ustadzah,Mas,Mbak'],
             'donor_phone'     => ['required', 'string', 'max:20'],
             'donor_email'     => ['nullable', 'email', 'max:255'],
+            'donor_alias' => ['nullable', 'string', 'max:255'],
             'amount'          => ['required', 'integer', 'min:1000'],
             'bank_account_id' => ['required', 'exists:bank_accounts,id'],
             'on_behalf'       => ['nullable', 'string', 'max:255'],
