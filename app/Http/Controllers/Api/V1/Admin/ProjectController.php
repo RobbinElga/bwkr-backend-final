@@ -110,11 +110,25 @@ class ProjectController extends Controller
             $data['slug'] = $this->uniqueSlug($data['slug'], $project->id);
         }
 
-        if ($request->hasFile('images')) {
-            foreach ($project->images ?? [] as $old_path) {
-                $this->images->delete($old_path);
+        if ($request->has('kept_images') || $request->hasFile('images')) {
+            // URL gambar yang dipertahankan -> path
+            $kept = collect($request->input('kept_images', []))
+                ->map(function ($url) {
+                    $pos = strpos((string) $url, '/storage/');
+                    return $pos !== false ? substr($url, $pos + strlen('/storage/')) : $url;
+                })
+                ->all();
+
+            // hapus file lama yang tidak dipertahankan
+            foreach (array_diff($project->images ?? [], $kept) as $removed) {
+                $this->images->delete($removed);
             }
-            $data['images'] = $this->images->storeMany($request->file('images'), 'projects');
+
+            $newPaths = $kept;
+            if ($request->hasFile('images')) {
+                $newPaths = array_merge($newPaths, $this->images->storeMany($request->file('images'), 'projects'));
+            }
+            $data['images'] = array_values($newPaths);
         }
 
         $project->update($data);
