@@ -59,8 +59,11 @@ class ProgramController extends Controller
             $data['slug'] = $this->uniqueSlug($data['slug'], $program->id);
         }
 
-        if ($request->hasFile('image')) {
-            $this->images->delete($program->image);   // buang gambar lama
+        if ($request->boolean('remove_image')) {
+            $this->images->delete($program->image);
+            $data['image'] = null;
+        } elseif ($request->hasFile('image')) {
+            $this->images->delete($program->image);
             $data['image'] = $this->images->store($request->file('image'), 'programs');
         }
 
