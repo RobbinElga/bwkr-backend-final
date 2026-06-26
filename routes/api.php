@@ -82,6 +82,8 @@ Route::prefix('v1')->group(function () {
     Route::get('impact-videos', [PublicImpactVideoController::class, 'index']);
     Route::get('achievements',  [PublicAchievementController::class, 'index']);
     Route::get('settings', [PublicSettingController::class, 'index']);
+    Route::get('proof/{donation}', [PublicDonationController::class, 'proof'])
+        ->name('proof.show')->middleware('signed');
 
     // ===== AREA ADMIN =====
     Route::middleware(['auth:sanctum', 'ability:staff'])->prefix('admin')->group(function () {
@@ -172,6 +174,7 @@ Route::prefix('v1')->group(function () {
             Route::post('donations-input',                 [AdminDonationInputController::class, 'store']);
             Route::get('donations-input/{donation}',       [AdminDonationInputController::class, 'show']);
             Route::get('donations-input/{donation}/proof', [AdminDonationInputController::class, 'proof']);
+            Route::get('donations-input/{donation}/proof-url', [AdminDonationInputController::class, 'proofUrl']);
             Route::get('donations-claim',                   [AdminClaimController::class, 'index']);
             Route::post('donations-claim',                  [AdminClaimController::class, 'store']);
             Route::get('crm/donors',              [AdminCrmDonorController::class, 'index']);

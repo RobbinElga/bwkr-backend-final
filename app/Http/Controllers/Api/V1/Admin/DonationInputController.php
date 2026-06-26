@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Storage;
 use App\Services\NotificationService;
 use App\Services\ReportExporter;
 use App\Support\ReportPeriod;
+use Illuminate\Support\Facades\URL;
 
 class DonationInputController extends Controller
 {
@@ -154,5 +155,15 @@ class DonationInputController extends Controller
         $d->forceDelete();
         $this->audit->log('force_deleted', $d);
         return response()->json(['message' => 'Donasi dihapus permanen.']);
+    }
+
+    /** URL bukti bertanda-tangan (berlaku 10 menit) — dibuka langsung di browser. */
+    public function proofUrl(DonationInput $donation)
+    {
+        abort_unless($donation->proof_file, 404);
+
+        $url = URL::temporarySignedRoute('proof.show', now()->addMinutes(10), ['donation' => $donation->id]);
+
+        return response()->json(['url' => $url]);
     }
 }

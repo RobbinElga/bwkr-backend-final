@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Donation\StoreDonationRequest;
 use App\Models\DonationInput;
 use App\Services\ProofFileService;
+use Illuminate\Support\Facades\Storage;
 
 class PublicDonationController extends Controller
 {
@@ -48,5 +49,14 @@ class PublicDonationController extends Controller
             'status'     => $donation->status->value,
             'created_at' => $donation->created_at,
         ]);
+    }
+
+    /** Stream bukti transfer via signed URL (10 menit). */
+    public function proof(DonationInput $donation)
+    {
+        $path = rescue(fn() => $donation->proof_file, null, false);
+        abort_unless($path && Storage::disk('local')->exists($path), 404);
+
+        return Storage::disk('local')->response($path);
     }
 }
