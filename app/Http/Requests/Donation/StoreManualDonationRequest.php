@@ -25,7 +25,7 @@ class StoreManualDonationRequest extends FormRequest
             'bank_account_id' => ['nullable', 'exists:bank_accounts,id'],
             'on_behalf'       => ['nullable', 'string', 'max:255'],
             'message'         => ['nullable', 'string', 'max:1000'],
-            'proof'           => ['nullable', 'file', 'mimes:jpeg,jpg,png,webp,heic,pdf', 'max:10240'],
+            'proof'           => ['required', 'file', 'mimes:jpeg,jpg,png,webp,heic,pdf', 'max:10240'],
         ];
     }
 }
