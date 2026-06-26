@@ -51,10 +51,14 @@ class BroadcastController extends Controller
             'created_by'      => Auth::id(),
         ]);
 
-        foreach ($recipients as $r) {
+        $interval = (int) config('whatsapp.broadcast_interval', 6); // detik antar pesan → 5 pesan / 30 detik
+
+        foreach ($recipients->values() as $i => $r) {
             $message = $this->crm->fillPlaceholders($template, $r);
 
-            SendWhatsAppNotification::dispatch($r['phone'], $message);
+            SendWhatsAppNotification::dispatch($r['phone'], $message)
+                ->onConnection('database')                       // paksa lewat queue (bukan sync)
+                ->delay(now()->addSeconds($i * $interval));      // jeda bertahap
 
             CrmLog::create([
                 'donor_phone_hash' => $r['hash'],
