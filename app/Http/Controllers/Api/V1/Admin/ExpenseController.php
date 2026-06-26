@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Storage;
 use App\Services\NotificationService;
 use App\Services\ReportExporter;
 use App\Support\ReportPeriod;
+use Illuminate\Support\Facades\URL;
 
 class ExpenseController extends Controller
 {
@@ -223,5 +224,29 @@ class ExpenseController extends Controller
         $e->forceDelete();
         $this->audit->log('force_deleted', $e);
         return response()->json(['message' => 'Pengeluaran dihapus permanen.']);
+    }
+
+    /** URL bertanda-tangan untuk file pengeluaran (10 menit). */
+    public function fileUrl(Expense $expense, string $type)
+    {
+        $map = ['receipt' => 'receipt_file', 'ttd' => 'ttd_file', 'materai' => 'materai_file'];
+        abort_unless(isset($map[$type]) && $expense->{$map[$type]}, 404);
+
+        $url = URL::temporarySignedRoute('expense.file', now()->addMinutes(10), [
+            'expense' => $expense->id,
+            'type' => $type,
+        ]);
+        return response()->json(['url' => $url]);
+    }
+
+    /** Stream file via signed URL (tanpa token). */
+    public function fileSigned(Expense $expense, string $type)
+    {
+        $map = ['receipt' => 'receipt_file', 'ttd' => 'ttd_file', 'materai' => 'materai_file'];
+        abort_unless(isset($map[$type]), 404);
+        $path = rescue(fn() => $expense->{$map[$type]}, null, false);
+        abort_unless($path && Storage::disk('local')->exists($path), 404);
+
+        return Storage::disk('local')->response($path);
     }
 }

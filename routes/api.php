@@ -84,6 +84,8 @@ Route::prefix('v1')->group(function () {
     Route::get('settings', [PublicSettingController::class, 'index']);
     Route::get('proof/{donation}', [PublicDonationController::class, 'proof'])
         ->name('proof.show')->middleware('signed');
+    Route::get('expense-file/{expense}/{type}', [AdminExpenseController::class, 'fileSigned'])
+        ->name('expense.file')->middleware('signed');
 
     // ===== AREA ADMIN =====
     Route::middleware(['auth:sanctum', 'ability:staff'])->prefix('admin')->group(function () {
@@ -150,6 +152,7 @@ Route::prefix('v1')->group(function () {
             Route::post('expenses/{expense}/approve',    [AdminExpenseController::class, 'approve']);
             Route::post('expenses/{expense}/reject',     [AdminExpenseController::class, 'reject']);
             Route::get('expenses/{expense}/file/{type}', [AdminExpenseController::class, 'file']);
+            Route::get('expenses/{expense}/file-url/{type}', [AdminExpenseController::class, 'fileUrl']);
             Route::get('projects/{project}/donors', [AdminProjectController::class, 'donors']);
             Route::apiResource('news', AdminNewsController::class);
             Route::apiResource('partners', AdminPartnerController::class);
