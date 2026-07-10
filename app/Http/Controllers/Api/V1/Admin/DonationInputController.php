@@ -101,7 +101,7 @@ class DonationInputController extends Controller
 
         $rows = $donations->map(fn($d) => [
             $d->ref_no,
-            optional($d->created_at)->format('d/m/Y H:i'),
+            $d->donation_date?->format('d/m/Y') ?: optional($d->created_at)->format('d/m/Y H:i'),
             $d->donor_alias ?: $d->donor_name,
             'Rp ' . number_format($d->amount, 0, ',', '.'),
             ucfirst($d->source->value),

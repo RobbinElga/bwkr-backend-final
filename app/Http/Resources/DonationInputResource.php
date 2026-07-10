@@ -23,10 +23,11 @@ class DonationInputResource extends JsonResource
             'has_proof'    => $this->has_proof,
             'bank_account' => BankAccountResource::make($this->whenLoaded('bankAccount')),
             'source'       => $this->source->value,
-            'status'       => $this->status->value,
-            'user_id'      => $this->user_id,
-            'created_at'   => $this->created_at,
-            'deleted_at' => $this->deleted_at,
+            'status'         => $this->status->value,
+            'donation_date'  => $this->donation_date?->format('Y-m-d'),
+            'user_id'        => $this->user_id,
+            'created_at'     => $this->created_at,
+            'deleted_at'     => $this->deleted_at,
         ];
     }
 }

@@ -15,7 +15,8 @@ class DonaturDonationResource extends JsonResource
             'on_behalf'    => $this->on_behalf,
             'message'      => $this->message,
             'status'       => $this->status->value,
-            'source'       => $this->source->value,
+            'source'         => $this->source->value,
+            'donation_date'  => $this->donation_date?->format('Y-m-d'),
             'project'      => $this->whenLoaded('project', fn() => $this->project ? [
                 'name' => $this->project->name,
                 'slug' => $this->project->slug,

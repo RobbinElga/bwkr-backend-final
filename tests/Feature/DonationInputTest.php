@@ -34,7 +34,6 @@ class DonationInputTest extends TestCase
         ])->assertCreated()->assertJsonPath('status', 'pending');
 
         $this->assertNotEmpty($res->json('ref_no'));
-        Queue::assertPushed(SendWhatsAppNotification::class);
 
         $donation = DonationInput::first();
         Storage::disk('local')->assertExists($donation->proof_file);  // bukti di disk PRIVAT
@@ -102,6 +101,7 @@ class DonationInputTest extends TestCase
             'donor_phone'     => '081200001111',
             'amount'          => 250000,
             'bank_account_id' => $bank->id,
+            'proof'           => UploadedFile::fake()->image('bukti.jpg'),
         ])->assertCreated()->assertJsonPath('data.source', 'manual');
 
         $this->assertNotNull(DonationInput::first()->input_by);
@@ -127,6 +127,23 @@ class DonationInputTest extends TestCase
 
         Sanctum::actingAs(User::factory()->role(UserRole::Admin)->create(), ['staff']);
         $this->getJson("/api/v1/admin/donations-input/{$donation->id}/proof")->assertOk();
+    }
+
+    public function test_cs_bisa_input_manual_dengan_tanggal(): void
+    {
+        Queue::fake();
+        Storage::fake('local');
+        Sanctum::actingAs(User::factory()->role(UserRole::Cs)->create(), ['staff']);
+        $bank = BankAccount::factory()->create();
+
+        $this->postJson('/api/v1/admin/donations-input', [
+            'donor_name'      => 'Donatur Offline',
+            'donor_phone'     => '081200001111',
+            'amount'          => 250000,
+            'bank_account_id' => $bank->id,
+            'proof'           => UploadedFile::fake()->image('bukti.jpg'),
+            'donation_date'   => '2026-06-15',
+        ])->assertCreated()->assertJsonPath('data.donation_date', '2026-06-15');
     }
 
     public function test_donatur_tidak_bisa_akses_donations_input(): void

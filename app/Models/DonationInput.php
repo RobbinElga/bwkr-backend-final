@@ -39,6 +39,7 @@ class DonationInput extends Model
         'status',
         'payment_method',
         'payment_gateway_ref',
+        'donation_date',
     ];
 
     protected $attributes = [
@@ -49,10 +50,11 @@ class DonationInput extends Model
     protected function casts(): array
     {
         return [
-            'amount'     => 'integer',
-            'proof_file' => 'encrypted',
-            'source'     => DonationSource::class,
-            'status'     => DonationStatus::class,
+            'amount'         => 'integer',
+            'proof_file'     => 'encrypted',
+            'source'         => DonationSource::class,
+            'status'         => DonationStatus::class,
+            'donation_date'  => 'date:Y-m-d',
         ];
     }
 

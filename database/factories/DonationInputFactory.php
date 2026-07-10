@@ -21,6 +21,7 @@ class DonationInputFactory extends Factory
             'source'          => DonationSource::Online->value,
             'status'          => DonationStatus::Pending->value,
             'bank_account_id' => BankAccount::factory(),
+            'donation_date'   => fake()->optional(0.7)->date(),
         ];
     }
 }
