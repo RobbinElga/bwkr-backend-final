@@ -4,6 +4,10 @@
 <head>
     <meta charset="utf-8">
     <style>
+        @page {
+            margin: 28px 32px 48px;
+        }
+
         * {
             font-family: "DejaVu Sans", sans-serif;
         }
@@ -47,6 +51,16 @@
             border-collapse: collapse;
         }
 
+        table.data thead {
+            display: table-header-group;
+        }
+
+        /* header ulang tiap halaman */
+        table.data tr {
+            page-break-inside: avoid;
+        }
+
+        /* baris tak terpotong */
         table.data th {
             background: #0c5547;
             color: #fff;
@@ -54,28 +68,50 @@
             padding: 6px 8px;
             font-size: 10px;
             text-transform: uppercase;
+            border: 1px solid #0c5547;
         }
 
         table.data td {
             padding: 5px 8px;
-            border-bottom: 1px solid #e5e7eb;
             font-size: 10px;
+            border: 1px solid #e5e7eb;
         }
 
         table.data tr:nth-child(even) td {
             background: #f6f3f2;
         }
 
-        .summary {
-            margin-top: 14px;
-            width: 45%;
-            float: right;
-            border-collapse: collapse;
+        .summary-wrap {
+            margin-top: 18px;
+            width: 100%;
         }
 
-        .summary td {
-            padding: 4px 8px;
+        table.summary {
+            width: 46%;
+            float: right;
+            border-collapse: collapse;
+            border: 1px solid #cfe0da;
+        }
+
+        table.summary caption {
+            caption-side: top;
+            text-align: left;
+            font-weight: bold;
+            color: #0c5547;
             font-size: 11px;
+            padding: 6px 8px;
+            background: #eef5f2;
+            border-bottom: 1px solid #cfe0da;
+        }
+
+        table.summary td {
+            padding: 5px 8px;
+            font-size: 11px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        table.summary tr:last-child td {
+            border-bottom: 0;
         }
 
         .summary .label {
@@ -89,7 +125,7 @@
 
         .footer {
             position: fixed;
-            bottom: -12px;
+            bottom: -24px;
             left: 0;
             right: 0;
             color: #999;
@@ -144,14 +180,17 @@
     </table>
 
     @if (!empty($summary))
-        <table class="summary">
-            @foreach ($summary as $label => $value)
-                <tr>
-                    <td class="label">{{ $label }}</td>
-                    <td class="val">{{ $value }}</td>
-                </tr>
-            @endforeach
-        </table>
+        <div class="summary-wrap">
+            <table class="summary">
+                <caption>Ringkasan</caption>
+                @foreach ($summary as $label => $value)
+                    <tr>
+                        <td class="label">{{ $label }}</td>
+                        <td class="val">{{ $value }}</td>
+                    </tr>
+                @endforeach
+            </table>
+        </div>
     @endif
 
     <div class="footer">Dokumen ini dihasilkan otomatis oleh sistem BWKR.</div>

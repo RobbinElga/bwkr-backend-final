@@ -12,6 +12,7 @@ class DonationInputResource extends JsonResource
             'id'           => $this->id,
             'ref_no'       => $this->ref_no,
             'donor_name'   => $this->donor_name,
+            'salutation'   => $this->salutation,
             'donor_alias' => $this->donor_alias,
             'program_id'   => $this->program_id,
             'project_id'   => $this->project_id,

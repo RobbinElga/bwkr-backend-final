@@ -17,6 +17,8 @@ use App\Services\NotificationService;
 use App\Services\ReportExporter;
 use App\Support\ReportPeriod;
 use Illuminate\Support\Facades\URL;
+use App\Models\DonationClaim;
+use App\Http\Requests\Donation\UpdateManualDonationRequest;
 
 class DonationInputController extends Controller
 {
@@ -67,6 +69,33 @@ class DonationInputController extends Controller
     public function show(DonationInput $donation)
     {
         return new DonationInputResource($donation->load('bankAccount'));
+    }
+
+    public function update(UpdateManualDonationRequest $request, DonationInput $donation)
+    {
+        $data = collect($request->validated())->except('proof')->all();
+
+        // Jangan biarkan nominal turun di bawah yang sudah diklaim (pending/approved)
+        if (isset($data['amount'])) {
+            $allocated = (int) DonationClaim::where('donation_input_id', $donation->id)
+                ->whereIn('status', ['pending', 'approved'])->sum('amount');
+
+            abort_if(
+                $data['amount'] < $allocated,
+                422,
+                'Nominal tidak boleh kurang dari yang sudah diklaim (Rp' . number_format($allocated, 0, ',', '.') . ').'
+            );
+        }
+
+        // Ganti bukti hanya jika ada file baru; kalau tidak, bukti lama tetap
+        if ($request->hasFile('proof')) {
+            $data['proof_file'] = $this->proofs->store($request->file('proof'));
+        }
+
+        $donation->update($data);
+        $this->audit->log('updated', $donation, new: $this->auditable($donation->fresh()));
+
+        return new DonationInputResource($donation->fresh()->load('bankAccount'));
     }
 
     /** Stream bukti transfer (privat) — hanya staff terautentikasi. */
