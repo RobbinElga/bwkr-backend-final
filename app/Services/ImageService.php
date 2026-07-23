@@ -25,7 +25,7 @@ class ImageService
     }
 
     /** Simpan satu gambar: konversi ke WebP + kompres. Kembalikan path relatif. */
-    public function store(UploadedFile $file, string $folder = 'images'): string
+    public function store(UploadedFile $file, string $folder = 'images', ?int $maxWidth = null): string
     {
         $maxWidth = (int) config('bwkr.image.max_width', 1600);
         $quality  = (int) config('bwkr.image.quality', 80);

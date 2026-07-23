@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Setting;
 use App\Services\AuditService;
+use App\Services\ImageService;
 use App\Services\SettingService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -14,6 +15,7 @@ class SettingController extends Controller
     public function __construct(
         private readonly SettingService $settings,
         private readonly AuditService $audit,
+        private readonly ImageService $images,
     ) {}
 
     /** Kirim skema grup + nilai sekarang (URL untuk field gambar). */
@@ -62,18 +64,21 @@ class SettingController extends Controller
 
         // gambar
         foreach ($imageKeys as $key) {
-            // Hapus gambar (kosongkan + hapus file lama)
-            if ($request->boolean("{$key}__remove")) {
-                $old = Setting::where('key', $key)->value('value');
-                if ($old) Storage::disk('public')->delete($old);
-                Setting::updateOrCreate(['key' => $key], ['value' => null]);
-                continue;
-            }
             if ($request->hasFile($key)) {
                 $request->validate([$key => ['image', 'mimes:jpeg,jpg,png,webp,svg', 'max:5120']]);
+
                 $old = Setting::where('key', $key)->value('value');
                 if ($old) Storage::disk('public')->delete($old);
-                $payload[$key] = $request->file($key)->store('settings', 'public');
+
+                $file  = $request->file($key);
+                $isSvg = strtolower($file->getClientOriginalExtension()) === 'svg'
+                    || $file->getClientMimeType() === 'image/svg+xml';
+
+                // SVG: vektor, sudah ringan → simpan apa adanya.
+                // Raster (png/jpg/webp): konversi ke WebP + resize (maks 800px cukup untuk logo/settings).
+                $payload[$key] = $isSvg
+                    ? $file->store('settings', 'public')
+                    : $this->images->store($file, 'settings', 800);
             }
         }
 
